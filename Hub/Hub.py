@@ -165,7 +165,8 @@ def backToHub(direction = 'gameChoice'):
     entries.clear()
 
     if title is None:
-        title = w.create_text( (screeny[0]-(titleSize-7*prop[2])*len(titleContent))/2, titleSize*1.5, text=titleContent, anchor = NW, font=("Courier",int(titleSize) ), fill='white')
+        title = Label(w, text=titleContent, anchor = CENTER, font=("Courier",titleSize), bg=backgroundColor, fg='white')
+        title.place(relx=.5, y=titleSize*1.5, anchor='center')
 
     if direction == 'profiles':
         drawProfile( readGeneralStats() )
@@ -292,8 +293,10 @@ matplotlib.rcParams['xtick.color'] = COLOR
 matplotlib.rcParams['ytick.color'] = COLOR
 
 titleContent = 'NeuroFit'
-titleSize = 25*prop[2]
-title = w.create_text( (screeny[0]-(titleSize-7*prop[2])*len(titleContent))/2, titleSize*1.5, text=titleContent, anchor = NW, font=("Courier",int(titleSize) ), fill='white')
+titleSize = int(25*prop[2])
+
+title = Label(w, text=titleContent, anchor = CENTER, font=("Courier",titleSize), bg=backgroundColor, fg='white')
+title.place(relx=.5, y=titleSize*1.5, anchor='center')
 
 canvasList = []
 
@@ -573,7 +576,7 @@ def launchGame(game):
     for i in range(len(buttons)):
         buttons[i].destroy()
     buttons.clear()
-    w.delete(title)
+    title.destroy()
     title = None
 
     if game == 'Plaque Tournante':
