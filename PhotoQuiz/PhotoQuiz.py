@@ -5,7 +5,6 @@ g = sys.modules['__main__']
 from tkinter import *
 from PIL import Image, ImageTk, ImageOps
 import random, os
-import time
 from collections import OrderedDict
 from math import ceil
 import codecs
@@ -89,7 +88,7 @@ def saveVar(win=True):
         g.profileVar('PHdefeats',str(nbrDefeats),True)
 
 def letterChoice(lettre, index):
-    global imgName, NbrCaracter, health, foundLetters, name, currentImgName
+    global imgName, NbrCaracter, health, foundLetters, name, currentImgName, touches
 
     lettre=lettre.lower()
 
@@ -103,13 +102,12 @@ def letterChoice(lettre, index):
             changed = True
 
     if changed:
-        #mettre le bouton en vert
+        touches[index].configure(state='disabled', bg='#4CAF50')
         name.configure(text=currentImgName)
         if currentImgName == imgName:
             victory()
     else:
-        pass
-        #mettre le bouton en rouge si ça n'a pas changé
+        touches[index].configure(state='disabled', bg='#ff6b6b')
 
 def victory():
     restartButtonAppearPH()
