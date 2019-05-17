@@ -280,7 +280,7 @@ def restartAll(menu = False):
             wordChoice()
 
 def saveVar(win=True):
-    global beginTime, level
+    global beginTime, level, difficultyList
 
     elapsedTime = round(time.time() - beginTime, 3)
     timeList = g.profileVar('PEaverageTime')
@@ -447,7 +447,7 @@ def DifficultyChoice():
 
     for i in range(3):
         intervalle = difficultyDict.get(orderedDifficulty[i])
-        buttons.append(Button(g.w, text = orderedDifficulty[i] +'\n'+ str(intervalle[0]) +' à '+ str(intervalle[1]) +' lettres', command = lambda i=i: difficulty(i), anchor = NW,font=("Courier",int(12*g.prop[2]))))
+        buttons.append(Button(g.w, text = g.translate(orderedDifficulty[i]) +'\n'+ str(intervalle[0])+' '+g.translate('à')+' '+str(intervalle[1])+' '+g.translate('lettres'), command = lambda i=i: difficulty(i), anchor = NW,font=("Courier",int(12*g.prop[2]))))
         buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
         buttons[len(buttons)-1].place(x=g.screeny[0]/2-buttonSize*1.5 +buttonSize*i, y=g.screeny[1]/2-buttonSize/2, width=buttonSize, height=buttonSize)
 

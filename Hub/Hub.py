@@ -42,6 +42,8 @@ import numpy as np
 
 from tkinter import *
 import  tkinter as Tk
+from PIL import Image, ImageTk
+import os
 
 fenetre = Tk.Tk()
 #On initialise la fenêtre
@@ -65,11 +67,61 @@ prop = [screeny[0]/1280, screeny[1]/720, (screeny[0]*screeny[1])/(1280*720)]
 
 statsByGame = OrderedDict()
 statsByGame["Geometry Accuracy"] = ["GAspeedRecord","GAaverageDestroyedPlatforms","GAgameNumber"]
-statsByGame["Photo"] = ["PHthemes","PHvictories","PHaverageTime"]
+statsByGame["PhotoQuiz"] = ["PHthemes","PHvictories","PHaverageTime"]
 statsByGame["Pendu"] = ["PEdifficulty","PEvictories","PEdefeats","PEaverageTime"]
 
 length = 100
+#['mission', 'Description', 'Variables']
+failureQuotes = []
+successQuotes = []
+missions = []
+def missionsSetup():
+    global failureQuotes, successQuotes, missions
+    failureQuotes = ["C'est dur d'échouer, mais c'est pire de n'avoir jamais essayé de réussir. Theodore Roosevelt",
+                    "Le succès c'est d'aller d'échec en échec sans perdre son enthousiasme. Churchill",
+                    "L'échec est la mère du succès",
+                    "L'échec est l'épice qui donne sa saveur au succès. Truman Capote",
+                    "Mériter le succès plutôt qu'y parvenir. Pearson, Lest B.",
+                    "Un échec est un succès si on en retient quelque chose. Malcolm Forbes"]
+    successQuotes = ["La motivation est source de succès",
+                    "Tout simplement inarrêtable !",
+                    "Vaincre n'est rien, il faut profiter du succès. Napoléon Bonaparte",
+                    "Le succès, c'est l'échec de l'échec. Delphine Lamotte",
+                    "Le succès fut toujours un enfant de l'audace. Prosper Crébillon",
+                    "Le succès n'est pas un but mais un moyen de viser plus haut. Pierre de Coubertin"]
+    for i in range(len(failureQuotes)):
+        failureQuotes[i] = translate(failureQuotes[i])
+    for i in range(len(successQuotes)):
+        successQuotes[i] = translate(failureQuotes[i])
 
+    missions = [["translate('Première partie')", "translate('En espérant que ce ne soit pas la dernière !')",
+               'GAgameNumber>0 or PHvictories>0 or PHdefeats>0 or PEvictories>0 or PEdefeats>0',
+               'first.png','Global', "str('completed')"],
+
+               ["translate('Jouer et gagner ')+str(missionNumber)+translate(' partie(s) sur les trois jeux')", 'random.choice(successQuotes)',
+               'GAgameNumber>missionNumber and PHvictories>missionNumber and PEvictories>missionNumber', 'victory.png', 'Global', 'missionsNumbers[i]+25'],
+
+               ["translate('Gagner ')+str(missionNumber)+translate(' partie(s) sur le jeu du Pendu')", 'random.choice(successQuotes)',
+               'PEvictories>missionNumber', 'victory.png', 'Pendu', 'missionsNumbers[i]+25'],
+
+               ["translate('Gagner ')+str(missionNumber)+translate(' partie(s) sur PhotoQuiz')", 'random.choice(successQuotes)',
+               'PHvictories>missionNumber', 'victory.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
+
+               ["translate('Jouer et perdre ')+str(missionNumber)+translate(' partie(s) sur les trois jeux')", 'random.choice(failureQuotes)',
+               'GAgameNumber>missionNumber and PHdefeats>missionNumber and PEdefeats>missionNumber', 'defeat.png', 'Global', 'missionsNumbers[i]+25'],
+
+               ["translate('Perdre ')+str(missionNumber)+translate(' partie(s) sur le jeu du Pendu')", 'random.choice(failureQuotes)',
+               'PEdefeats>missionNumber', 'defeat.png', 'Pendu', 'missionsNumbers[i]+25'],
+
+               ["translate('Perdre ')+str(missionNumber)+translate(' partie(s) sur PhotoQuiz')", 'random.choice(failureQuotes)',
+               'PHdefeats>missionNumber', 'defeat.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
+
+               ["translate('Jouer ')+str(missionNumber)+translate(' partie(s) sur Geometry Accuracy')", 'random.choice(successQuotes)',
+               'GAgameNumber>missionNumber', 'victory.png', 'Geometry Accuracy', 'missionsNumbers[i]+25'],
+
+               ["translate('Reach ')+str(missionNumber)+'% '+translate('de vitesse sur Geometry Accuracy')", 'random.choice(successQuotes)',
+               'GAspeedRecord*100>missionNumber', 'level.png', 'Geometry Accuracy', 'missionsNumbers[i]+25']
+               ]
 def readCsv():
     global lines,header
     try:
@@ -80,13 +132,13 @@ def readCsv():
                   'GAaverageDestroyedPlatforms', 'GAgameNumber', 'PHthemes',
                   'PHvictories', 'PHdefeats', 'PHaverageTime', 'PEdifficulty',
                   'PEvictories', 'PEdefeats', 'PEaverageTime', 'PEpersonal',
-                  'Mot de passe', 'langage'],
+                  'Mot de passe', 'langage', 'completedMissions'],
 
                  ['Maximum', ['Pendu', 'Geometry Accuracy', 'PhotoQuiz'],
                   'max', 'moy/max', 'max',
                  ['cook','space','animals','technology','home furniture','games'],
                   'max', 'min', 'moy/min', ['0', '1', '2'], 'max', 'min',
-                  'moy/min', 'None', 'None', 'None']]
+                  'moy/min', 'None', 'None', 'None'], 'None', 'None']
         writeCsv()
         fichier=codecs.open("../input/stats.csv", 'r', encoding='utf8')
 
@@ -130,8 +182,81 @@ def writeCsv():
 
     fichier.close()
 
-def profileVar(var,newValue = None,write = False):
-    global chosenProfile,lines,header
+missionButtons = []
+missionImage = None
+
+def missionClear():
+    global missionButtons, missionImage, missionsToShow
+
+    for i in range(len(missionButtons)):
+        missionButtons[i].destroy()
+    missionButtons.clear()
+    if len(missionsToShow) != 0:
+        showMission(missionsToShow[0][0],missionsToShow[0][1])
+        missionsToShow.pop(0)
+    else:
+        verifyMissions() #Si le joueur a par exemple passé les 100% et 125% de vitesse en une partie,
+                         #on doit relancer la vérification pour prendre en compte 2 missions complétées.
+
+
+resolution = 16 #La translation progressive se fait par tranche de 16 milisecondes
+animationTime = 1200 #La translation dure 1 secondes
+waitTime = 7000 #Temps de pause
+
+def Translation(item, time, distVector, initialCoords, reverse=False, totalIterations=None, currentIterations=None, somme=None):
+
+    if totalIterations is None:
+        totalIterations=int(time/resolution)
+        currentIterations=1
+        somme = initialCoords
+
+    try:
+        somme[0]=float(somme[0])+distVector[0]/(time)*resolution
+        somme[1]=float(somme[1])+distVector[1]/(time)*resolution
+        item.place(x=somme[0],y=somme[1])
+    except Exception as e: #Si l'objet à translater a été supprimé, on stoppe la fonction
+        return
+
+    if (currentIterations != totalIterations):
+        currentIterations+=1
+        fenetre.after(resolution, lambda item_=item,time_=time,distVector_=distVector, reverse_=reverse, totalIterations_=totalIterations,currentIterations_=currentIterations, somme_=somme: Translation(item_,time_,distVector_, None, reverse, totalIterations_,currentIterations_,somme_) )
+    elif reverse is True:
+        reverse = False
+        distVector[0] = -distVector[0]
+        distVector[1] = -distVector[1]
+        initialCoords = somme
+        fenetre.after(waitTime, lambda item_=item, time_=time, distVector_=distVector, reverse_=reverse, totalIterations_=None, currentIterations_=None, somme_=None: Translation(item_,time_,distVector_, initialCoords, reverse, totalIterations_,currentIterations_,somme_) )
+    else:
+        missionClear()
+
+def showMission(textToShow, imgToShow):
+
+    missionButtons.append(Button(w, text=textToShow, command = lambda direction='profiles': missionClear(), anchor = CENTER, font=("Courier",int(12*prop[2])),wraplengt=2*buttonSize[0]))
+    missionButtons[len(missionButtons)-1].configure(fg='white', background='#2f3542', activebackground = '#4CAF50', relief = RIDGE, justify='center')
+    missionButtons[len(missionButtons)-1].place(x=0, y=0, width=2*buttonSize[0], height=2*buttonSize[1])
+    Translation(missionButtons[len(missionButtons)-1],animationTime, [-19/8*buttonSize[0], 0], [screeny[0]+2/8*buttonSize[0],screeny[1]-7/2*buttonSize[1]], True)
+
+    img = Image.open('questsIcons/'+imgToShow)
+    width, height = img.size
+
+    imgHeight = 2*buttonSize[1]
+    newSize = [int(width*imgHeight/height),int(imgHeight)]
+    if [width,height] != newSize:
+        try:
+            img = img.resize(newSize, Image.ANTIALIAS)
+            img.save('questsIcons/'+imgToShow,"PNG", quality=100)
+
+        except IOError:
+            print("Impossible de redimensionner l'image "+imgToShow+" !")
+            exit()
+    photo = ImageTk.PhotoImage(img)
+    missionButtons.append( Label(image=photo, borderwidth=0, bg='#2f3542') )
+    missionButtons[len(missionButtons)-1].image = photo #On garde une référence de l'image
+    missionButtons[len(missionButtons)-1].place(x=screeny[0]+2/8*buttonSize[0], y=screeny[1]-7/2*buttonSize[1])
+    Translation(missionButtons[len(missionButtons)-1],animationTime, [-19/8*buttonSize[0], 0], [screeny[0],screeny[1]-7/2*buttonSize[1]], True)
+
+def profileVar(var,newValue = None,write = False, shouldVerifyMission = True):
+    global chosenProfile,lines,header,missionButtons,missionImage
     readCsv()
     if newValue is not None:
 
@@ -139,8 +264,61 @@ def profileVar(var,newValue = None,write = False):
 
         if write:
             writeCsv()
+            if shouldVerifyMission:
+                verifyMissions()
     else:
         return lines[chosenProfile+2][header.index(var)]
+
+missionsToShow = []
+def verifyMissions():
+    global profile, missionsToShow, missionsNumbers, lines
+
+    readCsv()
+    GAgameNumber = lines[chosenProfile+2][header.index('GAgameNumber')]
+    PHvictories = lines[chosenProfile+2][header.index('PHvictories')]
+    PHdefeats = lines[chosenProfile+2][header.index('PHdefeats')]
+    PEvictories = lines[chosenProfile+2][header.index('PEvictories')]
+    PEdefeats = lines[chosenProfile+2][header.index('PEdefeats')]
+    GAspeedRecord = lines[chosenProfile+2][header.index('GAspeedRecord')]
+    allStats = [GAgameNumber,PHvictories,PHdefeats,PEvictories,PEdefeats,GAspeedRecord]
+    for i in range(len(allStats)):
+        if allStats[i] != 'None':
+            allStats[i]=float(allStats[i])
+        else:
+            allStats[i]=0
+    GAgameNumber = allStats[0]
+    PHvictories = allStats[1]
+    PHdefeats = allStats[2]
+    PEvictories = allStats[3]
+    PEdefeats = allStats[4]
+    GAspeedRecord = allStats[5]
+
+    missionsNumbers = lines[chosenProfile+2][header.index('completedMissions')]
+
+    changed = False
+    for i in range(len(missions)):
+        missionNumber = missionsNumbers[i]
+        if missionNumber != 'completed':
+            missionNumber = int(missionNumber)
+            missionsNumbers[i] = missionNumber
+            if missionNumber == 0:
+                missionNumber = 1
+
+            if eval(missions[i][2]):
+                changed = True
+
+                try: #Si le titre est "Première partie", la fonction eval() renvoit une erreur. On gère donc l'exception:
+                    missionsToShow.append( [ eval(missions[i][0])+'\n'+eval(missions[i][1]),missions[i][3] ] )
+                except:
+                    missionsToShow.append( [ missions[i][0]+'\n'+missions[i][1],missions[i][3] ] )
+
+                missionsNumbers[i] = eval(missions[i][5])
+
+    if changed:
+        profileVar('completedMissions',missionsNumbers,True,False)
+        showMission(missionsToShow[0][0],missionsToShow[0][1])
+        missionsToShow.pop(0)
+
 errorSet = None
 def backToHub(direction = 'gameChoice'):
     global plaqueTournante, title, profileName, errorSet
@@ -165,8 +343,7 @@ def backToHub(direction = 'gameChoice'):
     entries.clear()
 
     if title is None:
-        title = Label(w, text=titleContent, anchor = CENTER, font=("Courier",titleSize), bg=backgroundColor, fg='white')
-        title.place(relx=.5, y=titleSize*1.5, anchor='center')
+        title = w.create_text( (screeny[0]-(titleSize-7*prop[2])*len(titleContent))/2, titleSize*1.5, text=titleContent, anchor = NW, font=("Courier",int(titleSize) ), fill='white')
 
     if direction == 'profiles':
         drawProfile( readGeneralStats() )
@@ -293,10 +470,8 @@ matplotlib.rcParams['xtick.color'] = COLOR
 matplotlib.rcParams['ytick.color'] = COLOR
 
 titleContent = 'NeuroFit'
-titleSize = int(25*prop[2])
-
-title = Label(w, text=titleContent, anchor = CENTER, font=("Courier",titleSize), bg=backgroundColor, fg='white')
-title.place(relx=.5, y=titleSize*1.5, anchor='center')
+titleSize = 25*prop[2]
+title = w.create_text( (screeny[0]-(titleSize-7*prop[2])*len(titleContent))/2, titleSize*1.5, text=titleContent, anchor = NW, font=("Courier",int(titleSize) ), fill='white')
 
 canvasList = []
 
@@ -517,6 +692,7 @@ def login():
     if (chosenLanguage == 'None'):
         chosenLanguage = 'français'
 
+    missionsSetup() #On traduit les missions après avoir choisi le langage
     gameChoice()
 
 logging = False
@@ -576,7 +752,7 @@ def launchGame(game):
     for i in range(len(buttons)):
         buttons[i].destroy()
     buttons.clear()
-    title.destroy()
+    w.delete(title)
     title = None
 
     if game == 'Plaque Tournante':
@@ -710,6 +886,7 @@ def choseLanguage(language):
         chosenLanguage = language
         profileVar('langage',chosenLanguage,True)
         buttons[len(buttons)-1].configure(text=translate('Back'))
+        missionsSetup()
 
 def langage():
     for i in range(len(buttons)):
@@ -825,6 +1002,7 @@ def deleteProfile(supprButton, step = 0):
 
         backToHub('profiles')
 
+missionsValues = [0,0,0,0,0,0,0,0,100]
 errorSet = False
 def saveProfile():
     global excludedProfileCharacters, registering, chosenProfile, yOrigin, errorSet, entries, labels, lastIndex, buttons
@@ -904,7 +1082,7 @@ def saveProfile():
                 labels.append( Label(fenetre, text=errorsDict["PseudoAlreadyUsed"], height=labelHeight, bg=backgroundColor, fg='#ff6b6b') )
                 labels[len(labels)-1].place(x = (screeny[0]-len(errorsDict["PseudoAlreadyUsed"])*6)/2, y=yOrigin + labelHeight*(lastIndex*15-5) )
             return
-    registering = False
+    registering = FalsecompletedMissions
     cryptedPassword = Cesar(password, getKey(path,'landscape','key'), 0)
 
     fichier=codecs.open("../input/stats.csv", 'a+', encoding='utf8')
@@ -914,6 +1092,11 @@ def saveProfile():
             toAdd = "\n"+pseudo
         elif header[i] == "Mot de passe":
             toAdd = toAdd+cryptedPassword
+        elif header[i] == "completedMissions":
+            varToWrite = '1'
+            for i in range(len(missions)):
+                varToWrite = varToWrite+','+missionsValues[i]
+            toAdd =varToWrite
         else:
             toAdd = toAdd+"None"
         if i < len(header)-1:

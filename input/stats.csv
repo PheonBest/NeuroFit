@@ -1,2 +1,7 @@
-Profil;gamePlayed;GAspeedRecord;GAaverageDestroyedPlatforms;GAgameNumber;PHthemes;PHvictories;PHdefeats;PHaverageTime;PEdifficulty;PEvictories;PEdefeats;PEaverageTime;PEpersonal;Mot de passe;langage
-Maximum;Pendu,Geometry Accuracy,PhotoQuiz;max;moy/max;max;cook,space,animals,technology,home furniture,games;max;min;moy/min;0,1,2;max;min;moy/min;None;None;None
+Profil;gamePlayed;GAspeedRecord;GAaverageDestroyedPlatforms;GAgameNumber;PHthemes;PHvictories;PHdefeats;PHaverageTime;PEdifficulty;PEvictories;PEdefeats;PEaverageTime;PEpersonal;Mot de passe;langage;completedMissions
+Maximum;Pendu,Geometry Accuracy,PhotoQuiz;max;moy/max;max;cook,space,animals,technology,home furniture,games;max;min;moy/min;0,1,2;max;min;moy/min;None;None;None;None
+ISN;Geometry Accuracy,Pendu,PhotoQuiz;2.52;27,3,41,2,8,9,17,19,16,10,2,2,1,19,19,7,5,16,11,20,1,16,1,1;31;animals,games,technology,space,cook;18;1;6.909,9.77,23.413,5.271,4.433,7.8,4.509,4.964,8.857,6.171,4.654,8.097,5.236,3.291,4.739,3.728,4.546,6.436,6.828;0,1,2,0,0;12;4;13.128,11.963,23.586,7.261,10.117,25.651,35.271,12.322,23.806,15.475;None;heavoszg;english;completed,25,25,25,0,25,0,50,275
+A.Turing;Pendu,Geometry Accuracy, PhotoQuiz;1.7;30,2,26;3;0,1,2;2;1;13,2;0,1;6;2;20,17,25,15,26,15,17,19;None;heavoszg;None;0,0,0,0,0,0,0,0,100
+S.Jobs;Pendu,PhotoQuiz;None;None;None;0,2;3;0;30,46,37;2;3;1;50,47,38,53;None;heavoszg;None;0,0,0,0,0,0,0,0,100
+Grace Hopper;Geometry Accuracy;1.6;6,7;2;None;None;None;None;None;None;None;None;None;heavoszg;None;0,0,0,0,0,0,0,0,100
+test;Geometry Accuracy,Pendu,PhotoQuiz;1.2917999999999403;0,1,1,20,29,1,2,1,2;9;animals,cook;4;None;4.797,6.234,8.018,9.225;0,1,2;4;3;15.466,21.195,30.492,5.591,5.393,19.186,14.015;None;heavoszg;None;0,0,0,0,0,0,0,0,100

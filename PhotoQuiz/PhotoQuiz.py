@@ -3,7 +3,7 @@ g = sys.modules['__main__']
 # On importe les variables globales du fichier 'Hub.py' qui sont des attributs du module 'Hub'
 
 from tkinter import *
-from PIL import Image, ImageTk, ImageOps
+from PIL import Image, ImageTk
 import random, os
 from collections import OrderedDict
 from math import ceil
