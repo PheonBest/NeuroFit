@@ -47,7 +47,7 @@ import os
 
 fenetre = Tk.Tk()
 #On initialise la fenêtre
-tmpScreenWidth = int(2*fenetre.winfo_screenwidth()/3)
+tmpScreenWidth = int(2*1680/3)
 screeny = [tmpScreenWidth, tmpScreenWidth*(720/1280)] #Taille de la fenêtre
 
 backgroundColor = '#333'
@@ -716,7 +716,8 @@ def choseProfile(profileIndex):
 
     entries = []
     labels = []
-    profileName = w.create_text( (screeny[0]-50*prop[0])/2, (screeny[1]-525*prop[1])/2, text=profileVar('Profil'), anchor = NW, font=("Courier",int(titleSize) ), fill='white')
+    nameToShow=profileVar('Profil')
+    profileName = w.create_text( (screeny[0]-(titleSize-7*prop[2])*len(nameToShow))/2, (screeny[1]-525*prop[1])/2, text=nameToShow, anchor = NW, font=("Courier",int(titleSize) ), fill='white')
 
     yOrigin = (screeny[1] - labelHeight - 400*prop[1])/2
 
@@ -812,6 +813,9 @@ gameButtonSize = [  [370,500],
                     [250,250],
                     [300,500]
 ]
+for i in range(len(gameButtonSize)):
+    for j in range(len(gameButtonSize[i])):
+        gameButtonSize[i][j]= int( gameButtonSize[i][j] * prop[j] )
 gameButtonColor = [ '#55efc4',
                     '#81ecec',
                     '#74b9ff',
@@ -826,14 +830,6 @@ gameButtonSeparator = [[xOrigin,130],
                       [0,gameButtonSize[1][1]],
                       [gameButtonSize[2][0]+buttonBlocksSeparator,-gameButtonSize[2][1]]
 ]
-
-for i in range(len(gameButtonSize)):
-    for j in range(len(gameButtonSize[i])):
-        gameButtonSize[i][j]= int( gameButtonSize[i][j] * prop[j] )
-
-for i in range(len(gameButtonSeparator)):
-    for j in range(len(gameButtonSeparator[i])):
-        gameButtonSeparator[i][j]= int( gameButtonSeparator[i][j] * prop[j] )
 
 try:
     fichier=codecs.open("translate.csv", 'r', encoding='utf8')

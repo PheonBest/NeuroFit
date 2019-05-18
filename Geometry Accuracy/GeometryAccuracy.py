@@ -363,8 +363,6 @@ class Platform:
 
         self.color = color_
         self.ptA= ptA_
-        self.ptA[0] *= g.prop[0] #g.proportionnel à la largeur de la fenêtre
-        self.ptA[1] *= g.prop[1] #g.proportionnel à la hauteur de la fenêtre
 
         #On admet que la densité est de 1
         massAndCenters=[ #Aire, Centre
@@ -735,7 +733,6 @@ def Game():
             speedRecord = 0
         if speed > float(speedRecord):
             g.profileVar('GAspeedRecord',str(speed),True)
-        print('Vitesse:'+str(speed))
 
         destroyedPlatformsList = g.profileVar('GAaverageDestroyedPlatforms')
         if destroyedPlatformsList == 'None':
@@ -754,7 +751,6 @@ def Game():
         gameNumber = int(gameNumber)
         gameNumber+=1
         g.profileVar('GAgameNumber',str(gameNumber),True)
-        print(gameNumber)
 
         lost = strokeText(g.screeny[0]/2 + 110*g.prop[0], g.screeny[1]/2, g.translate('Game Over'), 'white', 'fuchsia', int(30*g.prop[2]))
 
@@ -798,7 +794,10 @@ def initializeGraphicObjects():
     player = Platform([0.2*g.screeny[0], playerHeight],['#3c40c6','#34e7e4','#ffdd59'], True, True, True)
     items.extend([player,Platform([0.2*g.screeny[0], randint(yPlatformInterval[0], yPlatformInterval[1])],['#2ed573','#1e90ff','#3742fa'])])
 
-    for i in range(5):
+    platformsNumber = math.ceil( (g.screeny[0]-lastPosition)/xPlatformInterval[0] )
+    #Le nombre de plateformes est arrondi à l'entier supérieur
+
+    for i in range(platformsNumber):
         newPos = randint(lastPosition+xPlatformInterval[0], lastPosition+xPlatformInterval[1])
 
         newPlatform = Platform([newPos, randint(yPlatformInterval[0], yPlatformInterval[1])],['#2ed573','#1e90ff','#3742fa'])
