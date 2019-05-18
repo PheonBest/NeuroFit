@@ -72,29 +72,27 @@ statsByGame["Pendu"] = ["PEdifficulty","PEvictories","PEdefeats","PEaverageTime"
 
 length = 100
 #['mission', 'Description', 'Variables']
-failureQuotes = []
-successQuotes = []
-missions = []
+failureQuotes = ["C'est dur d'échouer, mais c'est pire de n'avoir jamais essayé de réussir. Theodore Roosevelt",
+                "Le succès c'est d'aller d'échec en échec sans perdre son enthousiasme. Churchill",
+                "L'échec est la mère du succès",
+                "L'échec est l'épice qui donne sa saveur au succès. Truman Capote",
+                "Mériter le succès plutôt qu'y parvenir. Pearson, Lest B",
+                "Un échec est un succès si on en retient quelque chose. Malcolm Forbes"]
+successQuotes = ["La motivation est source de succès",
+                "Tout simplement inarrêtable !",
+                "Vaincre n'est rien, il faut profiter du succès. Napoléon Bonaparte",
+                "Le succès, c'est l'échec de l'échec. Delphine Lamotte",
+                "Le succès fut toujours un enfant de l'audace. Prosper Crébillon",
+                "Le succès n'est pas un but mais un moyen de viser plus haut. Pierre de Coubertin"]
+
 def missionsSetup():
     global failureQuotes, successQuotes, missions
-    failureQuotes = ["C'est dur d'échouer, mais c'est pire de n'avoir jamais essayé de réussir. Theodore Roosevelt",
-                    "Le succès c'est d'aller d'échec en échec sans perdre son enthousiasme. Churchill",
-                    "L'échec est la mère du succès",
-                    "L'échec est l'épice qui donne sa saveur au succès. Truman Capote",
-                    "Mériter le succès plutôt qu'y parvenir. Pearson, Lest B.",
-                    "Un échec est un succès si on en retient quelque chose. Malcolm Forbes"]
-    successQuotes = ["La motivation est source de succès",
-                    "Tout simplement inarrêtable !",
-                    "Vaincre n'est rien, il faut profiter du succès. Napoléon Bonaparte",
-                    "Le succès, c'est l'échec de l'échec. Delphine Lamotte",
-                    "Le succès fut toujours un enfant de l'audace. Prosper Crébillon",
-                    "Le succès n'est pas un but mais un moyen de viser plus haut. Pierre de Coubertin"]
     for i in range(len(failureQuotes)):
         failureQuotes[i] = translate(failureQuotes[i])
     for i in range(len(successQuotes)):
         successQuotes[i] = translate(failureQuotes[i])
 
-    missions = [["translate('Première partie')", "translate('En espérant que ce ne soit pas la dernière !')",
+missions = [["translate('Première partie')", "translate('En espérant que ce ne soit pas la dernière !')",
                'GAgameNumber>0 or PHvictories>0 or PHdefeats>0 or PEvictories>0 or PEdefeats>0',
                'first.png','Global', "str('completed')"],
 
@@ -197,7 +195,6 @@ def missionClear():
     else:
         verifyMissions() #Si le joueur a par exemple passé les 100% et 125% de vitesse en une partie,
                          #on doit relancer la vérification pour prendre en compte 2 missions complétées.
-
 
 resolution = 16 #La translation progressive se fait par tranche de 16 milisecondes
 animationTime = 1200 #La translation dure 1 secondes
@@ -865,6 +862,7 @@ def translate(toTranslate):
                 indexes = [i,j]
                 break
     if found == True:
+
         if indexes[1]!=allLanguages[chosenLanguage]:
             translated = translateList[indexes[0]][allLanguages[chosenLanguage]]
             if translated != "None":
@@ -884,9 +882,9 @@ def choseLanguage(language):
     global chosenLanguage
     if chosenLanguage != language:
         chosenLanguage = language
+        missionsSetup()
         profileVar('langage',chosenLanguage,True)
         buttons[len(buttons)-1].configure(text=translate('Back'))
-        missionsSetup()
 
 def langage():
     for i in range(len(buttons)):

@@ -51,10 +51,7 @@ def ProfilChoice(drawButtons=True):
    fichier.close()
    for i in range(len(lines)):
         lines[i].replace('\n','')
-   texts.append(g.w.create_text(640*g.prop[0],120*g.prop[1],fill="WHITE",font=("Times bold",int(12*g.prop[2])),text=g.translate("Défis principaux")))
-
-   for i in range(len(lines)):
-        texts.append(g.w.create_text(640*g.prop[0],(300+i*30)*g.prop[1],fill="WHITE",font=("Times",int(24*g.prop[2])),text=lines[i]))
+        texts.append(g.w.create_text(640*g.prop[0],(250+i*30)*g.prop[1],fill="WHITE",font=("Times",int(24*g.prop[2])),text=lines[i]))
    if drawButtons:
         buttons.append(Button(g.w, text=g.translate('Back'), command = lambda direction='gameChoice': returnToHub(direction), anchor = CENTER, font=("Courier",int(12*g.prop[2]))))
         buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
@@ -90,28 +87,23 @@ def GameMission(newLevel):
 
         if isinstance(stat, (list,)):
             if gameStats[level][i] == 'PEdifficulty':
+                for j in range(len(stat)):
+                    stat[j]=orderedDifficulty[int(stat[j])]
+            try: #Si c'est une liste de nombre, on calcule la somme
+                somme = 0
+                for j in range(len(stat)):
+                    somme=somme+float(stat[j])
+                toShow = str(int(somme))
+
+                if gameDescription[gameStats[level][i]] == g.translate('Temps joué'):
+                    toShow += ' '+g.translate('secondes')
+            except: #Si c'est une liste de strings, on fait de la concaténation
                 somme = ""
                 for j in range(len(stat)):
-                    somme=somme+orderedDifficulty[int(stat[j])]
+                    somme=somme+g.translate(stat[j])
                     if j < len(stat)-1:
                         somme = somme + ", "
                 toShow = somme
-            else:
-                try: #Si c'est une liste de nombre, on calcule la somme
-                    somme = 0
-                    for j in range(len(stat)):
-                        somme=somme+float(stat[j])
-                    toShow = str(int(somme))
-
-                    if gameDescription[gameStats[level][i]] == g.translate('Temps joué'):
-                        toShow += ' '+g.translate('secondes')
-                except: #Si c'est une liste de strings, on fait de la concaténation
-                    somme = ""
-                    for j in range(len(stat)):
-                        somme=somme+stat[j]
-                        if j < len(stat)-1:
-                            somme = somme + ", "
-                    toShow = somme
         else:
             toShow = stat
             if gameStats[level][i] == 'GAspeedRecord':
@@ -124,9 +116,11 @@ def drawAllMissions(currentLevel):
     global questsButtons
     missionsNumbers = g.profileVar('completedMissions')
     missionSpecificToGame = []
+    missionsNumbersSpecificToGame = []
     for i in range(len(g.missions)):
         if gameName[currentLevel] == g.missions[i][4]:
             missionSpecificToGame.append(g.missions[i])
+            missionsNumbersSpecificToGame.append(missionsNumbers[i])
     totalLines = ceil(len(missionSpecificToGame)/missionsParLigne)
     for ligne in range(totalLines):
         for colonne in range(missionsParLigne):
@@ -134,15 +128,19 @@ def drawAllMissions(currentLevel):
 
                 index = ligne*missionsParLigne+colonne
 
-                missionNumber = missionsNumbers[index]
+                missionNumber = missionsNumbersSpecificToGame[index]
                 if missionNumber == 'completed' or missionNumber!='0':
                     imgBackgroundColor = '#4CAF50'
                     if missionNumber != 'completed':
+                        print(missionNumber)
                         missionNumber=int(missionNumber)-25
                         if missionNumber == 0:
                             missionNumber = 1
+                    else:
+                        missionNumber= 1
                 else:
                     imgBackgroundColor = '#ff6b6b'
+                    missionNumber= 1
 
                 imgToShow=missionSpecificToGame[index][3]
                 img = Image.open('questsIcons/'+imgToShow)
@@ -160,7 +158,7 @@ def drawAllMissions(currentLevel):
                         exit()
 
                 x=(g.screeny[0]-(buttonSize[0]+newSize[0])*missionsParLigne)/2 + (buttonSize[0]++newSize[0]+buttonSeparator)*(index-missionsParLigne*ligne)
-                y=285*g.prop[1]+(g.screeny[1]-(buttonSize[1]+newSize[0])*totalLines)/2 + (buttonSize[1]+buttonSeparator)*ligne
+                y=120*g.prop[1]+g.screeny[1]/2 + (buttonSize[1]+buttonSeparator)*ligne
 
                 photo = ImageTk.PhotoImage(img)
                 questsButtons.append( Label(image=photo, borderwidth=0, bg=imgBackgroundColor) )
