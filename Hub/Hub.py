@@ -476,6 +476,8 @@ def drawChart(name, values,coords):
     global canvasList, clientDPI, dpiGraphSize, graphSize
     labels = []
     for game in statsByGame.keys():
+        if game == 'PhotoQuiz':
+            game = 'Photo'
         labels.append(game)
     N = len(labels)
     x_as = [n / float(N) * 2 * pi for n in range(N)]

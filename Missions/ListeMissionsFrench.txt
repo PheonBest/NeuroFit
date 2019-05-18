@@ -1,8 +1,6 @@
-LV1
-Le début d’une grande aventure (Objectifs : Ouvrir pour la première fois le programme)
-Première partie en espérant que ne soit pas la dernière (Objectifs : Première partie)
-Les présentations ont étaient faites (Objectifs : Jouer au moins une fois aux trois jeux)
-Première victoire (Objectifs : Gagner une partie sur un des trois jeux.)
-Tout simplement inarrêtable !(Objectifs : Gagner une partie au minimum sur les trois jeux.)
-LV2
-Dépasser le LV1 sur les trois jeux
+Les critères d'un objectif SMART
+* Simple/Spécifique
+* Mesurable
+* Ambitieux/Accessible/Accepté/Atteignable
+* Réaliste
+* Temporel

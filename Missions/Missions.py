@@ -132,7 +132,6 @@ def drawAllMissions(currentLevel):
                 if missionNumber == 'completed' or missionNumber!='0':
                     imgBackgroundColor = '#4CAF50'
                     if missionNumber != 'completed':
-                        print(missionNumber)
                         missionNumber=int(missionNumber)-25
                         if missionNumber == 0:
                             missionNumber = 1
