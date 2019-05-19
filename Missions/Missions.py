@@ -41,24 +41,31 @@ MissionsPricipales=[]
 texts=[]
 questsButtons = []
 
-def ProfilChoice(drawButtons=True):
-   global texts
+def changeLevel(newLevel):
+    global level
+    buttons[level+1].configure(background='#111')
+    buttons[newLevel+1].configure(background='#4CAF50')
+    level = newLevel
 
-   ClearText()
-   fileToOpen = g.translate('ListeMissionsFrench.txt')
-   fichier=open("../Missions/"+fileToOpen)
-   lines=fichier.readlines()
-   fichier.close()
-   for i in range(len(lines)):
+def ProfilChoice(drawButtons=True):
+    global texts
+    ClearText()
+
+    fileToOpen = g.translate('ListeMissionsFrench.txt')
+    fichier=open("../Missions/"+fileToOpen)
+    lines=fichier.readlines()
+    fichier.close()
+    for i in range(len(lines)):
         lines[i].replace('\n','')
         texts.append(g.w.create_text(640*g.prop[0],(250+i*30)*g.prop[1],fill="WHITE",font=("Times",int(24*g.prop[2])),text=lines[i]))
-   if drawButtons:
+    if drawButtons:
         buttons.append(Button(g.w, text=g.translate('Back'), command = lambda direction='gameChoice': returnToHub(direction), anchor = CENTER, font=("Courier",int(12*g.prop[2]))))
         buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
         buttons[len(buttons)-1].place(x=g.screeny[0]-6/5*240*g.prop[0], y=g.screeny[1]-(5/2+1/8)*30*g.prop[1], width=240*g.prop[0]/2, height=30*g.prop[1])
 
         GameMissionChoice()
-   drawAllMissions(len(gameName)-1)
+    changeLevel(len(gameName)-1)
+    drawAllMissions(len(gameName)-1)
 
 def ClearText():
     global texts
@@ -75,11 +82,12 @@ buttonSize= [2*240*g.prop[0],2*30*g.prop[1]]
 buttonSeparator = 5*g.prop[2]
 
 def GameMission(newLevel):
-    global level,texts
-    level = newLevel
+    global texts
 
+    changeLevel(newLevel)
     ClearText()
-    texts.append(g.w.create_text(640*g.prop[0],120*g.prop[1],fill="WHITE",font=("Times bold",int(12*g.prop[2])),text=g.translate('Défis')+' '+g.translate(gameName[level])))
+
+    texts.append(g.w.create_text(640*g.prop[0],220*g.prop[1],fill="WHITE",font=("Times bold",int(24*g.prop[2])),text=g.translate('Défis')+' - '+g.translate(gameName[level])))
     for i in range(len(gameStats[level])):
         stat = g.profileVar(gameStats[level][i])
         if stat == "None":
@@ -170,12 +178,12 @@ def drawAllMissions(currentLevel):
 
 def GameMissionChoice():
     global buttons
-    for i in range(3):
-        buttons.append(Button(g.w, text = gameName[i], command = lambda i=i: GameMission(i), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
+    for i in range(len(gameName)-1):
+        buttons.append(Button(g.w, text = g.translate(gameName[i]), command = lambda i=i: GameMission(i), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
         buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
         buttons[len(buttons)-1].place(x=g.screeny[0]/2-gameButtonSize*2 +gameButtonSize*i, y=g.screeny[1]/3.5-gameButtonSize/2, width=gameButtonSize*1, height=gameButtonSize/2.5)
-    i=3
-    buttons.append(Button(g.w, text = g.translate('Global'), command = lambda drawButtons=False: ProfilChoice(drawButtons), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
+    i=len(gameName)-1
+    buttons.append(Button(g.w, text = g.translate(gameName[i]), command = lambda drawButtons=False: ProfilChoice(drawButtons), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
     buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
     buttons[len(buttons)-1].place(x=g.screeny[0]/2-gameButtonSize*2 +gameButtonSize*i, y=g.screeny[1]/3.5-gameButtonSize/2, width=gameButtonSize*1, height=gameButtonSize/2.5)
 

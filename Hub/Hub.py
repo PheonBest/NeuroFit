@@ -47,7 +47,7 @@ import os
 
 fenetre = Tk.Tk()
 #On initialise la fenêtre
-tmpScreenWidth = int(2*1680/3)
+tmpScreenWidth = int(2*fenetre.winfo_screenwidth()/3)
 screeny = [tmpScreenWidth, tmpScreenWidth*(720/1280)] #Taille de la fenêtre
 
 backgroundColor = '#333'
@@ -825,7 +825,7 @@ gameButtonColor = [ '#55efc4',
 buttonBlocksSeparator = 110
 xOrigin = gameButtonSize[0][0]+gameButtonSize[1][0]+buttonBlocksSeparator+gameButtonSize[3][0]
 xOrigin = (screeny[0]-xOrigin)/2
-gameButtonSeparator = [[xOrigin,130],
+gameButtonSeparator = [[xOrigin,110],
                       [gameButtonSize[0][0],0],
                       [0,gameButtonSize[1][1]],
                       [gameButtonSize[2][0]+buttonBlocksSeparator,-gameButtonSize[2][1]]
