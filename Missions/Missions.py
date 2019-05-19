@@ -47,7 +47,7 @@ def changeLevel(newLevel):
     buttons[newLevel+1].configure(background='#4CAF50')
     level = newLevel
 
-def ProfilChoice(drawButtons=True):
+def GlobalMissions(drawButtons=True):
     global texts
     ClearText()
 
@@ -183,7 +183,7 @@ def GameMissionChoice():
         buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
         buttons[len(buttons)-1].place(x=g.screeny[0]/2-gameButtonSize*2 +gameButtonSize*i, y=g.screeny[1]/3.5-gameButtonSize/2, width=gameButtonSize*1, height=gameButtonSize/2.5)
     i=len(gameName)-1
-    buttons.append(Button(g.w, text = g.translate(gameName[i]), command = lambda drawButtons=False: ProfilChoice(drawButtons), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
+    buttons.append(Button(g.w, text = g.translate(gameName[i]), command = lambda drawButtons=False: GlobalMissions(drawButtons), anchor = CENTER,font=("Times bold",int(12*g.prop[2]))))
     buttons[len(buttons)-1].configure(fg='white', background='#111', activebackground = '#4CAF50', relief = RIDGE, justify='center')
     buttons[len(buttons)-1].place(x=g.screeny[0]/2-gameButtonSize*2 +gameButtonSize*i, y=g.screeny[1]/3.5-gameButtonSize/2, width=gameButtonSize*1, height=gameButtonSize/2.5)
 
@@ -195,4 +195,4 @@ def returnToHub(direction = 'gameChoice'):
 
     g.backToHub(direction)
 
-ProfilChoice()
+GlobalMissions()

@@ -302,7 +302,7 @@ def saveVar(win=True):
             pass
         else:
             difficultyList = difficultyList.split(',')
-    if level not in difficultyList:
+    if str(level) not in difficultyList:
         difficultyList.append(level)
         g.profileVar('PEdifficulty',difficultyList,True)
 
