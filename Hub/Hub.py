@@ -92,33 +92,35 @@ def missionsSetup():
     for i in range(len(successQuotes)):
         successQuotes[i] = translate(failureQuotes[i])
 
+#Valeurs à atteindre dans les missions:
+missionsValues = [0,0,0,0,0,0,0,0,100]
 missions = [["translate('Première partie')", "translate('En espérant que ce ne soit pas la dernière !')",
                'GAgameNumber>0 or PHvictories>0 or PHdefeats>0 or PEvictories>0 or PEdefeats>0',
                'first.png','Global', "str('completed')"],
 
                ["translate('Jouer et gagner ')+str(missionNumber)+translate(' partie(s) sur les trois jeux')", 'random.choice(successQuotes)',
-               'GAgameNumber>missionNumber and PHvictories>missionNumber and PEvictories>missionNumber', 'victory.png', 'Global', 'missionsNumbers[i]+25'],
+               'GAgameNumber>=missionNumber and PHvictories>=missionNumber and PEvictories>=missionNumber', 'victory.png', 'Global', 'missionsNumbers[i]+25'],
 
                ["translate('Gagner ')+str(missionNumber)+translate(' partie(s) sur le jeu du Pendu')", 'random.choice(successQuotes)',
-               'PEvictories>missionNumber', 'victory.png', 'Pendu', 'missionsNumbers[i]+25'],
+               'PEvictories>=missionNumber', 'victory.png', 'Pendu', 'missionsNumbers[i]+25'],
 
                ["translate('Gagner ')+str(missionNumber)+translate(' partie(s) sur PhotoQuiz')", 'random.choice(successQuotes)',
-               'PHvictories>missionNumber', 'victory.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
+               'PHvictories>=missionNumber', 'victory.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
 
                ["translate('Jouer et perdre ')+str(missionNumber)+translate(' partie(s) sur les trois jeux')", 'random.choice(failureQuotes)',
-               'GAgameNumber>missionNumber and PHdefeats>missionNumber and PEdefeats>missionNumber', 'defeat.png', 'Global', 'missionsNumbers[i]+25'],
+               'GAgameNumber>=missionNumber and PHdefeats>=missionNumber and PEdefeats>=missionNumber', 'defeat.png', 'Global', 'missionsNumbers[i]+25'],
 
                ["translate('Perdre ')+str(missionNumber)+translate(' partie(s) sur le jeu du Pendu')", 'random.choice(failureQuotes)',
-               'PEdefeats>missionNumber', 'defeat.png', 'Pendu', 'missionsNumbers[i]+25'],
+               'PEdefeats>=missionNumber', 'defeat.png', 'Pendu', 'missionsNumbers[i]+25'],
 
                ["translate('Perdre ')+str(missionNumber)+translate(' partie(s) sur PhotoQuiz')", 'random.choice(failureQuotes)',
-               'PHdefeats>missionNumber', 'defeat.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
+               'PHdefeats>=missionNumber', 'defeat.png', 'PhotoQuiz', 'missionsNumbers[i]+25'],
 
                ["translate('Jouer ')+str(missionNumber)+translate(' partie(s) sur Geometry Accuracy')", 'random.choice(successQuotes)',
-               'GAgameNumber>missionNumber', 'victory.png', 'Geometry Accuracy', 'missionsNumbers[i]+25'],
+               'GAgameNumber>=missionNumber', 'victory.png', 'Geometry Accuracy', 'missionsNumbers[i]+25'],
 
                ["translate('Reach ')+str(missionNumber)+'% '+translate('de vitesse sur Geometry Accuracy')", 'random.choice(successQuotes)',
-               'GAspeedRecord*100>missionNumber', 'level.png', 'Geometry Accuracy', 'missionsNumbers[i]+25']
+               'GAspeedRecord*100>=missionNumber', 'level.png', 'Geometry Accuracy', 'missionsNumbers[i]+25']
                ]
 def readCsv():
     global lines,header
@@ -757,7 +759,7 @@ def launchGame(game):
 
     if game == 'Plaque Tournante':
         plaqueTournante = True
-        gameList = ['PhotoQuiz','Pendu','Geometry Accuracy']
+        gameList = ['PhotoQuiz','Pendu','GeometryAccuracy']
         if lastGame is not None:
             gameList.remove(lastGame)
         game = random.choice(gameList)
@@ -776,32 +778,14 @@ def launchGame(game):
         alreadyPlayedGameList.append(game)
     profileVar('gamePlayed',alreadyPlayedGameList,True)
 
+    game = game.replace(' ','')
     lastGame = game
-    if game == 'PhotoQuiz':
-        if ('PhotoQuiz' in alreadyImported):
-            del sys.modules['PhotoQuiz']
-            import PhotoQuiz
-        else:
-            alreadyImported.append('PhotoQuiz')
-            sys.path.insert(0, r'../PhotoQuiz/')
-            import PhotoQuiz
-    elif game == 'Pendu':
-        if ('Pendu' in alreadyImported):
-            del sys.modules['Pendu']
-            import Pendu
-        else:
-            alreadyImported.append('Pendu')
-            sys.path.insert(0, r'../Pendu/')
-            import Pendu
-
-    elif game == 'Geometry Accuracy':
-        if ('Geometry Accuracy' in alreadyImported):
-            del sys.modules['GeometryAccuracy']
-            import GeometryAccuracy
-        else:
-            alreadyImported.append('Geometry Accuracy')
-            sys.path.insert(0, r'../Geometry Accuracy/')
-            import GeometryAccuracy
+    if (game in alreadyImported):
+        del sys.modules[game]
+    else:
+        alreadyImported.append(game)
+        sys.path.insert(0, r'../'+game+'/')
+    new_module = __import__(game) #On import le module 'game'
 
 gameButtonText = [  'Geometry Accuracy',
                     'PhotoQuiz',
@@ -998,7 +982,6 @@ def deleteProfile(supprButton, step = 0):
 
         backToHub('profiles')
 
-missionsValues = [0,0,0,0,0,0,0,0,100]
 errorSet = False
 def saveProfile():
     global excludedProfileCharacters, registering, chosenProfile, yOrigin, errorSet, entries, labels, lastIndex, buttons
@@ -1078,7 +1061,7 @@ def saveProfile():
                 labels.append( Label(fenetre, text=errorsDict["PseudoAlreadyUsed"], height=labelHeight, bg=backgroundColor, fg='#ff6b6b') )
                 labels[len(labels)-1].place(x = (screeny[0]-len(errorsDict["PseudoAlreadyUsed"])*6)/2, y=yOrigin + labelHeight*(lastIndex*15-5) )
             return
-    registering = FalsecompletedMissions
+    registering = False
     cryptedPassword = Cesar(password, getKey(path,'landscape','key'), 0)
 
     fichier=codecs.open("../input/stats.csv", 'a+', encoding='utf8')
@@ -1089,10 +1072,10 @@ def saveProfile():
         elif header[i] == "Mot de passe":
             toAdd = toAdd+cryptedPassword
         elif header[i] == "completedMissions":
-            varToWrite = '1'
-            for i in range(len(missions)):
-                varToWrite = varToWrite+','+missionsValues[i]
-            toAdd =varToWrite
+            varToWrite = str(missionsValues[0])
+            for j in range(1,len(missions)):
+                varToWrite = varToWrite+','+str(missionsValues[j])
+            toAdd = toAdd+varToWrite
         else:
             toAdd = toAdd+"None"
         if i < len(header)-1:

@@ -228,8 +228,18 @@ def returnToHub(direction = 'gameChoice'):
 
     g.backToHub(direction)
 
+falsePositiveClick = None
+falsePositiveTimeDelay = 0.7 #secondes
+def isItFalsePositiveClick(function_name, arg=None):
+    if time.time() - falsePositiveClick > falsePositiveTimeDelay:
+        if arg == None:
+            function_name()
+        else:
+            function_name(arg)
+
 def restartButtonAppear():
-    global touches, buttons, indice
+    global touches, buttons, indice, falsePositiveClick
+    falsePositiveClick = time.time()
 
     for i in range(len(touches)):
         touches[i].destroy()
@@ -241,13 +251,13 @@ def restartButtonAppear():
     except:
         pass
 
-    buttons.append( Button(g.w, text=g.translate('Hub'), command = lambda direction='gameChoice': returnToHub(direction), anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
+    buttons.append( Button(g.w, text=g.translate('Hub'), command = lambda function_name=returnToHub, direction='gameChoice': isItFalsePositiveClick(function_name,direction), anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
     buttons[len(buttons)-1].place(x=100*g.prop[0], y=300*g.prop[1], width=200*g.prop[0], height=150*g.prop[1])
 
-    buttons.append( Button(g.w, text=g.translate('Recommencer'), command = restartAll, anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
+    buttons.append( Button(g.w, text=g.translate('Recommencer'), command = lambda function_name=restartAll: isItFalsePositiveClick(function_name), anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
     buttons[len(buttons)-1].place(x=300*g.prop[0], y=300*g.prop[1], width=200*g.prop[0], height=150*g.prop[1])
 
-    buttons.append( Button(g.w, text=g.translate('Options'), command = lambda i=True: restartAll(i), anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
+    buttons.append( Button(g.w, text=g.translate('Options'), command = lambda function_name=restartAll, i=True: isItFalsePositiveClick(function_name,i), anchor = NW, font=( "Courier",int(20*g.prop[2]) )) )
     buttons[len(buttons)-1].place(x=500*g.prop[0], y=300*g.prop[1], width=200*g.prop[0], height=150*g.prop[1])
 
     Nbrdemottrouve()

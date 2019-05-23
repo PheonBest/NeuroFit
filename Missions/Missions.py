@@ -127,7 +127,7 @@ def drawAllMissions(currentLevel):
     missionsNumbersSpecificToGame = []
     for i in range(len(g.missions)):
         if gameName[currentLevel] == g.missions[i][4]:
-            missionSpecificToGame.append(g.missions[i])
+            missionSpecificToGame.append([g.missions[i],i])
             missionsNumbersSpecificToGame.append(missionsNumbers[i])
     totalLines = ceil(len(missionSpecificToGame)/missionsParLigne)
     for ligne in range(totalLines):
@@ -135,21 +135,22 @@ def drawAllMissions(currentLevel):
             if (ligne*missionsParLigne+colonne <= len(missionSpecificToGame)-1):
 
                 index = ligne*missionsParLigne+colonne
-
                 missionNumber = missionsNumbersSpecificToGame[index]
-                if missionNumber == 'completed' or missionNumber!='0':
+
+                if missionNumber == 'completed' or missionNumber!=str( g.missionsValues[missionSpecificToGame[index][1]] ):
                     imgBackgroundColor = '#4CAF50'
                     if missionNumber != 'completed':
                         missionNumber=int(missionNumber)-25
-                        if missionNumber == 0:
-                            missionNumber = 1
+
                     else:
-                        missionNumber= 1
+                        missionNumber = 1
                 else:
                     imgBackgroundColor = '#ff6b6b'
-                    missionNumber= 1
+                    missionNumber= g.missionsValues[missionSpecificToGame[index][1]]
+                if missionNumber == 0:
+                    missionNumber = 1
 
-                imgToShow=missionSpecificToGame[index][3]
+                imgToShow=missionSpecificToGame[index][0][3]
                 img = Image.open('questsIcons/'+imgToShow)
                 width, height = img.size
 
@@ -172,7 +173,7 @@ def drawAllMissions(currentLevel):
                 questsButtons[len(questsButtons)-1].image = photo #On garde une référence de l'image
                 questsButtons[len(questsButtons)-1].place(x=x, y=y)
 
-                questsButtons.append(Button(g.w, text=eval(missionSpecificToGame[index][0].replace('translate','g.translate')), anchor=CENTER, font=("Courier",int(12*g.prop[2])), wraplengt=buttonSize[0]))
+                questsButtons.append(Button(g.w, text=eval(missionSpecificToGame[index][0][0].replace('translate','g.translate')), anchor=CENTER, font=("Courier",int(12*g.prop[2])), wraplengt=buttonSize[0]))
                 questsButtons[len(questsButtons)-1].configure(relief = RIDGE, justify='center', fg=imgBackgroundColor, bg='#2f3542')
                 questsButtons[len(questsButtons)-1].place(x=x++newSize[0], y=y, width=buttonSize[0], height=buttonSize[1])
 
