@@ -6,8 +6,12 @@
 The EXE file is generated in 'dist' folder.
 
 How to make of the application an executable file ?
+Pour créer le .spec file:
+pyinstaller -onefile main.py
+
 Soit:
-On ajoute au fichier .spec: 
+On ajoute au fichier .spec:
+Le '.' sert à mettre le fichier à la source du programme
 added_files = [
 		 ( '../README.txt', '.' ),
 		 ( '../LICENCE.md', '.' ),
@@ -17,7 +21,7 @@ added_files = [
 		 ( '../PhotoQuiz', 'PhotoQuiz' ),
 		 ( '../input/stats.csv', 'input' ),
 		 ( '/steganography', 'steganography' ),
-         ( 'translate.csv', '.' ),
+                 ( 'translate.csv', '.' ),
 		 ( '/questsIcons', 'questsIcons' )
          ]
 a = Analysis(['Hub.py'],
@@ -37,20 +41,18 @@ Attention à mettre tout le chemin relatif ! E.g: '..\input\stats.csv' et non pas
 On ajoute au script:
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
+    back = '.'
+    if relative_path[:3] == "../":
+        relative_path = relative_path[3:]
+        back = '..'
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath(back))
     return os.path.join(base_path, relative_path)
 Logo = resource_path("Logo.png")
+Logo = resource_path("../Logo.png")
 
 Soit avec QtDesigner:
 https://stackoverflow.com/questions/28536306/inserting-an-image-in-gui-using-qt-designer/42776478#42776478
-
-Pour créer le .spec file:
-pyinstaller -onefile main.py
 
 Après avoir modifié le .spec file
 pyinstaller "Suite géométrique.spec"

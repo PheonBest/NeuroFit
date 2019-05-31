@@ -193,7 +193,7 @@ def writeCsv():
             toWrite = toWrite + "\n"
 
         fichier.write(toWrite)
-
+    fichier.flush()
     fichier.close()
 
 missionButtons = []
@@ -991,6 +991,7 @@ def deleteProfile(supprButton, step = 0):
             if i < len(lines)-1:
                 toWrite = toWrite + "\n"
             fichier.write(toWrite)
+        fichier.flush()
         fichier.close()
 
         chosenProfile = None
