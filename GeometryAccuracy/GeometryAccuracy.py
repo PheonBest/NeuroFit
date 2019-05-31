@@ -13,7 +13,7 @@ import types
 from PIL import Image, ImageTk
 from random import randint, uniform, choice
 
-path = '../GeometryAccuracy/'
+path = g.resource_path('../GeometryAccuracy/')
 
 image = Image.open(path+"Background.jpg")
 width, height = image.size

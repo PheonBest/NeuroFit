@@ -1,8 +1,21 @@
 ﻿# -*- coding: utf-8 -*-
-import codecs
+import io
 import sys
-from steganography.lire import getKey
 import random
+import os
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    back = '.'
+    if relative_path[:3] == "../":
+        relative_path = relative_path[3:]
+        back = '..'
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath(back))
+    return os.path.join(base_path, relative_path)
+
+sys.path.insert(0, resource_path('steganography/'))
+from lire import getKey
 
 def Cesar(message, key, decode=0):
     message = message.lower() #On met tous les caractères en minuscule
@@ -28,7 +41,7 @@ def Cesar(message, key, decode=0):
 
     return "".join(s) #On transforme la liste s en string
 
-path = 'steganography/'
+path = resource_path('steganography/')
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -43,7 +56,6 @@ import numpy as np
 from tkinter import *
 import  tkinter as Tk
 from PIL import Image, ImageTk
-import os
 
 fenetre = Tk.Tk()
 #On initialise la fenêtre
@@ -58,7 +70,9 @@ insideGraphColor = "b"
 w = Tk.Canvas(fenetre,
             width=screeny[0],
             height=screeny[1],
-            background=backgroundColor)
+            background=backgroundColor,
+            highlightthickness=0,
+            borderwidth=0)
 #On place le canvas
 w.grid(row=0,column=0)
 
@@ -125,7 +139,7 @@ missions = [["translate('Première partie')", "translate('En espérant que ce ne
 def readCsv():
     global lines,header
     try:
-        fichier=codecs.open("../input/stats.csv", 'r', encoding='utf8')
+        fichier=io.open(resource_path("../input/stats.csv"), 'r', encoding='utf8')
     except:
 
         lines = [['Profil', 'gamePlayed', 'GAspeedRecord',
@@ -140,7 +154,7 @@ def readCsv():
                   'max', 'min', 'moy/min', ['0', '1', '2'], 'max', 'min',
                   'moy/min', 'None', 'None', 'None'], 'None', 'None']
         writeCsv()
-        fichier=codecs.open("../input/stats.csv", 'r', encoding='utf8')
+        fichier=io.open(resource_path("../input/stats.csv"), 'r', encoding='utf8')
 
     lines=fichier.readlines()
     fichier.close()
@@ -158,7 +172,7 @@ def readCsv():
 
 def writeCsv():
     global lines
-    fichier=codecs.open("../input/stats.csv", 'w', encoding='utf8')
+    fichier=io.open(resource_path("../input/stats.csv"), 'w', encoding='utf8')
     for i in range(len(lines)):
         toWrite = ""
         for j in range(len(lines[i])):
@@ -235,7 +249,7 @@ def showMission(textToShow, imgToShow):
     missionButtons[len(missionButtons)-1].place(x=0, y=0, width=2*buttonSize[0], height=2*buttonSize[1])
     Translation(missionButtons[len(missionButtons)-1],animationTime, [-19/8*buttonSize[0], 0], [screeny[0]+2/8*buttonSize[0],screeny[1]-7/2*buttonSize[1]], True)
 
-    img = Image.open('questsIcons/'+imgToShow)
+    img = Image.open(resource_path('questsIcons/')+imgToShow)
     width, height = img.size
 
     imgHeight = 2*buttonSize[1]
@@ -243,7 +257,7 @@ def showMission(textToShow, imgToShow):
     if [width,height] != newSize:
         try:
             img = img.resize(newSize, Image.ANTIALIAS)
-            img.save('questsIcons/'+imgToShow,"PNG", quality=100)
+            img.save(resource_path('questsIcons/')+imgToShow,"PNG", quality=100)
 
         except IOError:
             print("Impossible de redimensionner l'image "+imgToShow+" !")
@@ -641,7 +655,7 @@ chosenLanguage = 'français'
 def login():
     global profileName, chosenLanguage, logging, errorSet, lines, chosenProfile, lastIndex
 
-    fichier=codecs.open("../input/stats.csv", 'r', encoding='utf8')
+    fichier=io.open(resource_path("../input/stats.csv"), 'r', encoding='utf8')
     lines=fichier.readlines()
     fichier.close()
 
@@ -662,7 +676,7 @@ def login():
                 lines[i][j] = lines[i][j][0]
 
     password = entries[0].get()
-    if password != Cesar(lines[chosenProfile][header.index('Mot de passe')], getKey(path,'landscape','key'), 1):
+    if password.lower() != Cesar(lines[chosenProfile][header.index('Mot de passe')], getKey(path,'landscape','key'), 1):
         if errorSet:
             labels[len(labels)-1].config(text=errorsDict["WrongPassword"])
         else:
@@ -778,13 +792,13 @@ def launchGame(game):
         alreadyPlayedGameList.append(game)
     profileVar('gamePlayed',alreadyPlayedGameList,True)
 
-    game = game.replace(' ','')
+    game=game.replace(' ','')
     lastGame = game
     if (game in alreadyImported):
         del sys.modules[game]
     else:
         alreadyImported.append(game)
-        sys.path.insert(0, r'../'+game+'/')
+        sys.path.insert(0, resource_path('../'+game+'/'))
     new_module = __import__(game) #On import le module 'game'
 
 gameButtonText = [  'Geometry Accuracy',
@@ -816,15 +830,16 @@ gameButtonSeparator = [[xOrigin,110],
 ]
 
 try:
-    fichier=codecs.open("translate.csv", 'r', encoding='utf8')
+    fichier=io.open(resource_path("translate.csv"), 'r', encoding='utf8')
 except:
-    fichier=codecs.open("translate.csv", 'w', encoding='utf8')
+    fichier=io.open(resource_path("translate.csv"), 'w', encoding='utf8')
     fichier.write('english;français\n')
     fichier.close()
-    fichier=codecs.open("translate.csv", 'r', encoding='utf8')
+    fichier=io.open(resource_path("translate.csv"), 'r', encoding='utf8')
 
 translateList=fichier.readlines()
 fichier.close()
+
 for i in range(len(translateList)):
     translateList[i] = translateList[i].replace('\n','')
     translateList[i] = translateList[i].split(';')
@@ -846,7 +861,7 @@ def translate(toTranslate):
     if found == True:
 
         if indexes[1]!=allLanguages[chosenLanguage]:
-            translated = translateList[indexes[0]][allLanguages[chosenLanguage]]
+            translated = translateList[indexes[0]][allLanguages[chosenLanguage]].replace('\r','')
             if translated != "None":
                 return translated
             else:
@@ -855,7 +870,7 @@ def translate(toTranslate):
             return toTranslate
     else:
         translateList.append([toTranslate,"None"])
-        fichier=codecs.open("translate.csv", 'a', encoding='utf8')
+        fichier=io.open(resource_path("translate.csv"), 'a', encoding='utf8')
         fichier.write(toTranslate+ ';None\n')
         fichier.close()
         return toTranslate
@@ -895,7 +910,7 @@ def importMissions():
         import Missions
     else:
         alreadyImported.append('Missions')
-        sys.path.insert(0, r'../Missions/')
+        sys.path.insert(0, resource_path('../Missions/'))
         import Missions
 
 def gameChoice():
@@ -954,7 +969,7 @@ def deleteProfile(supprButton, step = 0):
         fenetre.after(1000, lambda supprButton=supprButton: reEnable(supprButton) )
     else:
 
-        fichier=codecs.open("../input/stats.csv", 'r', encoding='utf8')
+        fichier=io.open(resource_path("../input/stats.csv"), 'r', encoding='utf8')
         lines=fichier.readlines()
         fichier.close()
 
@@ -965,7 +980,7 @@ def deleteProfile(supprButton, step = 0):
 
         lines.pop(chosenProfile+2)
 
-        fichier=codecs.open("../input/stats.csv", 'w', encoding='utf8')
+        fichier=io.open(resource_path("../input/stats.csv"), 'w', encoding='utf8')
         for i in range(len(lines)):
             toWrite = ""
             for j in range(len(lines[i])):
@@ -1032,7 +1047,7 @@ def saveProfile():
             labels[len(labels)-1].place(x = (screeny[0]-len(errorsDict["PasswordsNotMatching"])*6)/2, y=yOrigin + labelHeight*(lastIndex*15-5) )
         return
 
-    fichier=open("../input/stats.csv","r")
+    fichier=open(resource_path("../input/stats.csv"),"r")
     lines=fichier.readlines()
     fichier.close()
 
@@ -1064,7 +1079,7 @@ def saveProfile():
     registering = False
     cryptedPassword = Cesar(password, getKey(path,'landscape','key'), 0)
 
-    fichier=codecs.open("../input/stats.csv", 'a+', encoding='utf8')
+    fichier=io.open(resource_path("../input/stats.csv"), 'a+', encoding='utf8')
     toAdd = ""
     for i in range(len(header)):
         if header[i] == "Profil":

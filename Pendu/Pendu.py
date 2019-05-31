@@ -553,7 +553,7 @@ def Indice():
         indice.configure(text=g.translate('Vous avez moins de 3 points de vie !'), fg='white', bg='#ff6b6b', state='disabled',wraplength=170, font=( "Courier",int(12*g.prop[2]) ))
 
 #---------------------------------------------
-path = '../Pendu/'
+path = g.resource_path('../Pendu/')
 
 #Variables et exécution du programme
 #Liste des caractères exclus, et donc automatiquement rêvélés à l'utilisateur

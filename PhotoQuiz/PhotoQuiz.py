@@ -10,7 +10,7 @@ from math import ceil
 import codecs
 import time
 
-path = '../PhotoQuiz/imageFolder/'
+path = g.resource_path('../PhotoQuiz/imageFolder/')
 dirs = []
 
 themes = OrderedDict()

@@ -1,0 +1,61 @@
+1 - Go in 'Hub' folder.
+2 - Then enter the command:
+       pyinstaller --paths "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" -w -F "Hub.spec"
+       With an icon:
+       pyinstaller --paths "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" -w -F -i %%path to icon%% "Hub.spec"
+The EXE file is generated in 'dist' folder.
+
+How to make of the application an executable file ?
+Soit:
+On ajoute au fichier .spec: 
+added_files = [
+		 ( '../README.txt', '.' ),
+		 ( '../LICENCE.md', '.' ),
+		 ( '../GeometryAccuracy', 'GeometryAccuracy' ),
+		 ( '../Missions', 'Missions' ),
+		 ( '../Pendu', 'Pendu' ),
+		 ( '../PhotoQuiz', 'PhotoQuiz' ),
+		 ( '../input/stats.csv', 'input' ),
+		 ( '/steganography', 'steganography' ),
+         ( 'translate.csv', '.' ),
+		 ( '/questsIcons', 'questsIcons' )
+         ]
+a = Analysis(['Hub.py'],
+             pathex=['G:\\Documents\\GitHub\\NeuroFit\\Hub'],
+             binaries=[],
+             datas=added_files,
+             hiddenimports=[],
+             hookspath=[],
+             runtime_hooks=[],
+             excludes=[],
+             win_no_prefer_redirects=False,
+             win_private_assemblies=False,
+             cipher=block_cipher,
+             noarchive=False)
+Attention à mettre tout le chemin relatif ! E.g: '..\input\stats.csv' et non pas 'stats.csv'
+
+On ajoute au script:
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+Logo = resource_path("Logo.png")
+
+Soit avec QtDesigner:
+https://stackoverflow.com/questions/28536306/inserting-an-image-in-gui-using-qt-designer/42776478#42776478
+
+Pour créer le .spec file:
+pyinstaller -onefile main.py
+
+Après avoir modifié le .spec file
+pyinstaller "Suite géométrique.spec"
+
+Éxécutable final:
+pyinstaller --paths "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" -w -F "Hub.spec"
+Avec une icone:
+pyinstaller --paths "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" -w -F -i %%path to icon%% "Hub.spec"

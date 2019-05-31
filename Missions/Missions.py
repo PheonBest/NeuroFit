@@ -52,7 +52,7 @@ def GlobalMissions(drawButtons=True):
     ClearText()
 
     fileToOpen = g.translate('ListeMissionsFrench.txt')
-    fichier=open("../Missions/"+fileToOpen)
+    fichier=open(g.resource_path("../Missions/")+fileToOpen)
     lines=fichier.readlines()
     fichier.close()
     for i in range(len(lines)):
@@ -151,7 +151,7 @@ def drawAllMissions(currentLevel):
                     missionNumber = 1
 
                 imgToShow=missionSpecificToGame[index][0][3]
-                img = Image.open('questsIcons/'+imgToShow)
+                img = Image.open(g.resource_path('questsIcons/')+imgToShow)
                 width, height = img.size
 
                 imgHeight = buttonSize[1]
